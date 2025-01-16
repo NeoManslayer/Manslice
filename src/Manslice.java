@@ -9,7 +9,7 @@ public class Manslice {
 
     private String chordVoice, melodyVoice, rhythmVoice, bassVoice;
 
-    private int BPM;
+    private int bpm;
 
     private String slice;
 
