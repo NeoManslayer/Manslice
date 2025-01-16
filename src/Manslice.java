@@ -102,7 +102,7 @@ public class Manslice {
         this.rep.front().closeChordType = chordType;
     }
 
-    public void openMelody(String[] melody) {
+    public void openMelody(String... melody) {
         this.rep.front().openMelody = melody;
     }
 
