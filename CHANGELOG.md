@@ -6,13 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Calendar Versioning](https://calver.org/) of
 the following form: YYYY.0M.0D.
 
-## 2024.09.17
+## 2025.01.18
 
 ### Added
 
-- Designed a `ManslayerProg` component
-- Designed a `PresidentActions` component
-- Designed a `Manslice` component
+- Designed kernel and enhanced interfaces for `Manslice` component
+
+### Updated
+
+- Changed design to include `Slice` and `Flip` classes
+in order to have a component that will be implemented with two sequences
+(one sequence, `Sequence<Slice>` represents the chords of the song... the other,
+`Sequence<Flip>` represents the way in which those will be arranged in time within
+a song)
+    - `Slice` represents the chords
+    - `Flip` represents pattern of chords in context of song 
+    (arrangement, tempo, bpm)
+- Changed design to potentially include a GUI and MIDI functionality 
+that detects manual user input for editing of song slices and allows for
+playing of chord progression
 
 ## 2024.10.05
 
@@ -25,4 +37,13 @@ the following form: YYYY.0M.0D.
 - Changed design to include one internal class `Cell`
     - `Cell` represents a musical phrase of length `beats` with two chords: `openChord`, `closeChord`; a melody: `openMelody`, `closeMelody`; a rhythm: `openRhythm`, `closeRhythm`; and a bassline: `openBass`, `closeBass`
 - Changed design to be implemented using `Queue` component (OSU Java Component)
-- Changed design by removing the use of `openMode` in favor of an `openCell` function that will just override the current open cell if there is one (you can call `openCell` if there is a cell that hasn't been closed, it just means you will be making a new open cell and replacing the one that hasn't been closed)
+    - Changed design by removing the use of `openMode` in favor of an `openCell` function that will just override the current open cell if there is one (you can call `openCell` if there is a cell that hasn't been closed, it just means you will be making a new open cell and replacing the one that hasn't been closed)
+
+## 2024.09.17
+
+### Added
+
+- Designed a `ManslayerProg` component
+- Designed a `PresidentActions` component
+- Designed a `Manslice` component
+

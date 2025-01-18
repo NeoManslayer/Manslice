@@ -9,7 +9,7 @@ public class Manslice {
 
     private String chordVoice, melodyVoice, rhythmVoice, bassVoice;
 
-    private int bpm;
+    private int BPM;
 
     private String slice;
 
@@ -106,23 +106,23 @@ public class Manslice {
         this.rep.front().openMelody = melody;
     }
 
-    public void closeMelody(String[] melody) {
+    public void closeMelody(String... melody) {
         this.rep.front().closeMelody = melody;
     }
 
-    public void openRhythm(String[] rhythm) {
+    public void openRhythm(String... rhythm) {
         this.rep.front().openRhythm = rhythm;
     }
 
-    public void closeRhythm(String[] rhythm) {
+    public void closeRhythm(String... rhythm) {
         this.rep.front().closeRhythm = rhythm;
     }
 
-    public void openBass(String[] bass) {
+    public void openBass(String... bass) {
         this.rep.front().openBass = bass;
     }
 
-    public void closeBass(String[] bass) {
+    public void closeBass(String... bass) {
         this.rep.front().closeBass = bass;
     }
 
@@ -192,7 +192,6 @@ public class Manslice {
     }
 
     public static void main(String[] args) {
-        //main
         Manslice manslice = new Manslice();
         int beats = 8, bpm = 100;
         String openRoot = "60", openType = "maj7", closeRoot = "64",
