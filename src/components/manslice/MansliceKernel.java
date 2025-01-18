@@ -82,7 +82,7 @@ public interface MansliceKernel extends Standard<Manslice> {
      * Position
      *
      * @ensures
-     * Flip at position is no longer with us (in slices)
+     * Flip at position is no longer with us (in flips)
      *
      * @requires
      * Pos < length of flips
