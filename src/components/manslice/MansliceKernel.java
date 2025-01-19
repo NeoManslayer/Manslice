@@ -1,6 +1,7 @@
 package components.manslice;
 
 import components.standard.Standard;
+import components.sequence.Sequence;
 
 /*
  * Arranges chords by patterns (chord progressions) like how a DJ or 
@@ -11,13 +12,13 @@ public interface MansliceKernel extends Standard<Manslice> {
     /*
      * Represents collection of song phrases
      */
-    interface Slices<T extends Slice> {
+    interface Slices<T extends Slice> extends Sequence<T> {
     }
 
     /*
      * Represents collection of song patterns
      */
-    interface Flips<T extends Flip> {
+    interface Flips<T extends Flip> extends Sequence<T> {
     }
 
     /*
