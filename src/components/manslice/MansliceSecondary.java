@@ -21,12 +21,12 @@ public abstract class MansliceSecondary implements Manslice {
     /*
      * Represents collection of song phrases
      */
-    protected Slices<Slice> slices;
+    public Slices<Slice> slices;
 
     /*
      * Represents collection of song patterns
      */
-    protected Flips<Flip> flips;
+    public Flips<Flip> flips;
 
     /*
      * Constructor to initialize slices and flips
@@ -36,6 +36,12 @@ public abstract class MansliceSecondary implements Manslice {
         assert flips != null;
         this.slices = slices;
         this.flips = flips;
+    }
+
+    /*
+     * Default constructor
+     */
+    public MansliceSecondary() {
     }
 
     /*

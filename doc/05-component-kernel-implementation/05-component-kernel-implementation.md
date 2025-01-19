@@ -1,8 +1,8 @@
 # Portfolio Part 5: Kernel Implementation
 
-- **Name**: <!-- TODO: fill with first and last name (e.g., Brutus Buckeye) and delete this comment -->
-- **Dot Number**: <!-- TODO: fill with OSU dot number (e.g., buckeye.17) and delete this comment -->
-- **Due Date**: <!-- TODO: fill out with due date and time (e.g., 10/17 @ 3:10 PM EST) and delete this comment -->
+- **Name**: Nick Monaco
+- **Dot Number**: monaco.60
+- **Due Date**: 11/15 @ 4:10 PM EST
 
 ## Assignment Overview
 
@@ -39,8 +39,6 @@ of the file. Feel free to reference any of your kernel implementations for
 examples of these.
 
 ## Assignment Checklist
-
-<!-- TODO: browse the checklist then delete this comment -->
 
 To be sure you have completed everything on this assignment, we have littered
 this document with TODO comments. You can browse all of them in VSCode by
@@ -112,7 +110,35 @@ do good work.
 > discuss how that representation will be restricted (i.e., by convention)
 > and interpreted (i.e., by correspondence).
 
-<!-- TODO: select a representation and explain why -->
+`Manslice` is 2 nested interfaces containing song data 
+with methods that allow for a GUI and MIDI
+(song) playability through user's audio.
+
+Methods are implemented with `Sequence` and libraries such as javafx which
+allow for GUI and MIDI capabilities.
+
+`Sequence` was chosen to allow users to add, remove, rearrange, replace parts
+of either the song's chords or the pattern of the song. This is because
+`Sequence`'s kernel methods `add...`, `remove...` allow the user to choose
+which position to add or remove an entry (more choice in where to put a chord
+or track, similar to a real piano roll in a Digital Audio Workstation).
+
+First nested interface is `Slices` which contains the song's chords (`Slice`s)
+which contain the duration of notes and the notes.
+
+Second nestest interface is `Flips` which contains the song's pattern,
+similar to how a DJ or music producer might arrange/chop up a song. It 
+tells us which `Slice` in `Slices` to play, when to play them, how fast to
+play them, in what order to play them, and for how many iterations.
+
+These interfaces were created to distinguish the song's contents from the
+chopping up or arranging of the song to simulate the experience of a music 
+producer scavenging through old records to find the perfect song pattern to
+sample.
+
+To further justify the structure, `Manslice` serves to emulate a piano roll
+where there are tracks containing notes (first interface) and then there's the
+second interface where you arrange the order of those tracks.
 
 > To start making your kernel implementation, make a branch off of main in your
 > new repo called something like `kernel-implementation`. There are many ways to
@@ -134,8 +160,6 @@ do good work.
 > rebase strategies described [here](https://stackoverflow.com/questions/35790561/working-while-waiting-for-pending-pr)
 > and [here](https://stackoverflow.com/questions/18021888/continue-working-on-a-git-branch-after-making-a-pull-request).
 
-<!-- TODO: make a new branch from main then delete this comment -->
-
 ## Assignment Tasks
 
 Your primary task for this assignment is to create a kernel implementation that
@@ -154,8 +178,6 @@ The following sections detail everything that you should do once you've
 completed the assignment.
 
 ### Changelog
-
-<!-- TODO: update CHANGELOG then delete this comment -->
 
 At the end of every assignment, you should update the
 [CHANGELOG.md](../../CHANGELOG.md) file found in the root of the project folder.
@@ -189,8 +211,6 @@ like to accomplish that, you will need to make GitHub releases after each pull
 request merge (or at least tag your commits). This is not required.
 
 ### Submission
-
-<!-- TODO: read the submission instructions then delete this comment -->
 
 Assuming that your project is in a GitHub repo somewhere and your changes are on
 a proof-of-concept branch, then what we'll want you to do is create a pull
@@ -241,8 +261,6 @@ PDF to read this rubric as a table).
 If you'd like to give feedback for this assignment (or any assignment, really),
 make use of [this survey][survey]. Your feedback helps make assignments
 better for future students.
-
-<!-- TODO: follow the link to share your feedback then delete this comment -->
 
 [markdown-to-pdf-guide]: https://therenegadecoder.com/blog/how-to-convert-markdown-to-a-pdf-3-quick-solutions/
 [survey]: https://forms.gle/dumXHo6A4Enucdkq9

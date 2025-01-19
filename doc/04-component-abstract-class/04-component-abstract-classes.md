@@ -2,7 +2,7 @@
 
 - **Name**: Nick Monaco
 - **Dot Number**: monaco.60
-- **Due Date**: 12/4 @ 4:10 PM EST
+- **Due Date**: 11/1 @ 4:10 PM EST
 
 ## Assignment Overview
 
