@@ -33,5 +33,6 @@ replay_pid*
 # binaries
 /bin
 
-# jdtls workspace
+# misc
 .jdtls-workspace/
+\'
