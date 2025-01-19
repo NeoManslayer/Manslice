@@ -5,5 +5,5 @@ package components.manslice;
  */
 public class Slice {
     int beats = 8;
-    String chord = "";
+    String[] chord = {""};
 }
