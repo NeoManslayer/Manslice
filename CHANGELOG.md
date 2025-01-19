@@ -10,6 +10,25 @@ the following form: YYYY.0M.0D.
 
 ### Added
 
+- Designed abstract class for `Manslice` component
+
+### Updated
+
+- Changed design of `MansliceKernel` to include two interfaces 
+`Slices<T extends Slice>` and
+`Flips<T extends Flip>` to serve as internal classes
+for storing of song pattern and chords
+- Kept `song()` as an abstract method
+    - Due to requiring unique libraries like javafx for GUI/MIDI support,
+    along with being more difficult to implement than other methods,
+    the implementation of `song()` will be left to non-abstract classes.
+    - In future revisions, `song()` may be replaced with multiple methods
+    implemented within the abstract class to help with class implementation.
+
+## 2025.01.18
+
+### Added
+
 - Designed kernel and enhanced interfaces for `Manslice` component
 
 ### Updated

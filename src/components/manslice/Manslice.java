@@ -21,7 +21,6 @@ public interface Manslice extends MansliceKernel {
      * 
      * @requires
      * Pos is in Manslice.Slices<Slice>
-     * Pos < Manslice.Slices<Slice>.length()
      */
     void replaceSlice(int pos, Slice x);
 
@@ -40,7 +39,6 @@ public interface Manslice extends MansliceKernel {
      * 
      * @requires
      * Pos is in Manslice.Flips<Flip>
-     * Pos < Manslice.Flips<Flip>.length()
      */
     void replaceFlip(int pos, Flip x);
 

@@ -7,5 +7,5 @@ package components.manslice;
 public class Flip {
     int bpm = 100;
     int loop = 1;
-    String flip = "";
+    String[] flip = {""};
 }

@@ -9,12 +9,24 @@ import components.standard.Standard;
 public interface MansliceKernel extends Standard<Manslice> {
 
     /*
+     * Represents collection of song phrases
+     */
+    interface Slices<T extends Slice> {
+    }
+
+    /*
+     * Represents collection of song patterns
+     */
+    interface Flips<T extends Flip> {
+    }
+
+    /*
      * Reports length of `Sequence<Slice>` (length of slices)
      *
      * @return
      * Length of `Sequence<Slice>`
      */
-    int lengthSlice();
+    int lengthSlices();
 
     /*
      * Reports length of `Sequence<Flip>` (length of flips)
@@ -22,7 +34,7 @@ public interface MansliceKernel extends Standard<Manslice> {
      * @return
      * Length of `Sequence<Flip>`
      */
-    int lengthFlip();
+    int lengthFlips();
 
     /*
      * Inserts a slice at a position
@@ -91,5 +103,35 @@ public interface MansliceKernel extends Standard<Manslice> {
      * Flip at position
      */
     Flip removeFlip(int pos);
+
+    /*
+     * Checks if chord is valid input
+     *
+     * @param chord
+     * musical notes (chord)
+     *
+     * @requires
+     *
+     * @return
+     * Whether chord is valid {@code true}
+     * Or invalid {@code false}
+     */
+    boolean validChord(String... chord);
+
+    /*
+     * Checks if flip is valid input
+     *
+     * @param flip
+     * Flip containing song pattern info.
+     *
+     * @requires
+     * Sequence of positive integer digits (0 to Slices.length())
+     * Each digit is less than length of {@code Slices}
+     *
+     * @return
+     * Whether pattern is valid {@code true}
+     * Or invalid {@code false}
+     */
+    boolean validFlip(String... flip);
 
 }
