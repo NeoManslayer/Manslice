@@ -1,0 +1,102 @@
+plugins {
+    // Apply the application plugin to add support for building a CLI application in Java.
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+    flatDir {
+        dirs '../libs'
+    }
+}
+
+javafx {
+    version = "23.0.2"
+    modules = [ 
+    'javafx.controls', 
+    'javafx.fxml' 
+    ]
+}
+
+dependencies {
+    // This dependency is used by the application.
+    implementation libs.guava
+    implementation name: 'components'
+}
+
+testing {
+    suites {
+        // Configure the built-in test suite
+        test {
+            // Use JUnit Jupiter test framework
+            useJUnitJupiter('5.11.1')
+        }
+    }
+}
+
+// Apply a specific Java toolchain to ease working on different environments.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'app.manslice.App'
+}
+
+// Use a lazy provider to avoid direct access to sourceSets during configuration phase
+tasks.withType(JavaExec) {
+    if (name == 'run') {
+        // Lazily resolve classpath during execution phase, not during configuration
+        classpath = project.files(sourceSets.main.runtimeClasspath)
+
+        // Lazily resolve mainClass using a provider
+        mainClass = project.hasProperty('c') ? project.property('c') : application.mainClass.orNull
+
+        // Use a lazy provider for classpath and mainClass if possible
+        doFirst {
+            // This ensures the classpath and mainClass are evaluated lazily before execution
+            if (!mainClass) {
+                throw new GradleException("No main class set! Either use -Pc=<mainClass> or define it in the Application plugin.")
+            }
+        }
+    }
+}
+
+task listRunnableClasses {
+    // Define variables during configuration phase
+    def sourceDirs = sourceSets.main.java.srcDirs
+    def mainClasses = []
+
+    doLast {
+        sourceDirs.each { dir ->
+            dir.eachFileRecurse { file ->
+                if (file.name.endsWith('.java')) {
+                    def content = file.text
+                    if (content.contains('public static void main')) {
+                        def className = file.name[0..-6] // Remove ".java"
+                        mainClasses << className
+                    }
+                }
+            }
+        }
+
+        println "Runnable classes with main method:"
+        mainClasses.each { className ->
+            println className
+        }
+    }
+}
