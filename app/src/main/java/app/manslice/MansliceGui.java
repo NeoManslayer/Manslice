@@ -5,15 +5,10 @@ import components.sequence.Sequence;
 import components.sequence.Sequence1L;
 import components.map.Map;
 import components.map.Map1L;
-import components.simplewriter.SimpleWriter;
-import components.simplewriter.SimpleWriter1L;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import javafx.scene.*;
+import javafx.stage.*;
+import javafx.fxml.FXMLLoader;
 
 /*
  * brainstorming
@@ -31,7 +26,7 @@ import javafx.stage.Stage;
  * gonna have a bpm value that is consistent for all flips (difficult to do otherwise)
  */
 
-public class MansliceGui extends Application{
+public class MansliceGui extends Application {
 
     /*
      * implementing class
@@ -108,18 +103,6 @@ public class MansliceGui extends Application{
     /*
      * kernel
      */
-    public static int[] parsePattern(String... args) {
-        // enumerations
-        int[] parsed = new int[args.length];
-        for (int i = 0; i < args.length; i++) {
-            parsed[i] = Integer.parseInt(args[i]) - 1;
-        }
-        return parsed;
-    }
-
-    /*
-     * kernel
-     */
     public static int[] parse(String... args) {
         int[] parsed = new int[args.length];
         for (int i = 0; i < args.length; i++) {
@@ -151,7 +134,7 @@ public class MansliceGui extends Application{
         // need enumeration
         for (int k = 0; k < loop + 1; k++) {
             for (int i = 0; i < pattern.length; i++) {
-                flip.add(flip.length(),(pattern[i]));
+                flip.add(flip.length(), (pattern[i]));
             }
         }
         return flip;
@@ -182,9 +165,9 @@ public class MansliceGui extends Application{
      * kernel
      */
     public static Sequence<Integer> getSliceChord(int pos) {
-        Map.Pair<Sequence<Integer>, Integer> temp = manSlices.entry(pos).removeAny();
+        Map.Pair<Sequence<Integer>, Integer> temp = manSlices.entry(pos - 1).removeAny();
         Sequence<Integer> chord = temp.key();
-        manSlices.entry(pos).add(temp.key(), temp.value());
+        manSlices.entry(pos - 1).add(temp.key(), temp.value());
         return chord;
     }
 
@@ -192,9 +175,9 @@ public class MansliceGui extends Application{
      * kernel
      */
     public static int getSliceBeats(int pos) {
-        Map.Pair<Sequence<Integer>, Integer> temp = manSlices.entry(pos).removeAny();
+        Map.Pair<Sequence<Integer>, Integer> temp = manSlices.entry(pos - 1).removeAny();
         int beats = temp.value();
-        manSlices.entry(pos).add(temp.key(), temp.value());
+        manSlices.entry(pos - 1).add(temp.key(), temp.value());
         return beats;
     }
 
@@ -202,7 +185,7 @@ public class MansliceGui extends Application{
      * kernel
      */
     public static Sequence<Integer> getFlipPattern(int pos) {
-        return manFlips.entry(pos);
+        return manFlips.entry(pos - 1);
     }
 
     /*
@@ -246,14 +229,14 @@ public class MansliceGui extends Application{
      * kernel
      */
     public static void removeSlice(int pos) {
-        manSlices.remove(pos);
+        manSlices.remove(pos - 1);
     }
 
     /*
      * kernel
      */
     public static void removeFlip(int pos) {
-        manFlips.remove(pos);
+        manFlips.remove(pos - 1);
     }
 
     /*
@@ -277,7 +260,7 @@ public class MansliceGui extends Application{
      * kernel
      */
     public static void transformSlice(int pos, int... transform) {
-        Map<Sequence<Integer>, Integer> map = manSlices.entry(pos);
+        Map<Sequence<Integer>, Integer> map = manSlices.entry(pos - 1);
         Map.Pair<Sequence<Integer>, Integer> slice = map.removeAny();
         for (int i = 0; i < transform.length; i++) {
             int entry = slice.key().entry(i);
@@ -291,7 +274,7 @@ public class MansliceGui extends Application{
     /*
      * kernel
      */
-    public static void cloneSlice(int beats, int pos) {
+    public static void cloneSlice(int pos, int beats) {
         Map<Sequence<Integer>, Integer> map = manSlices.entry(pos - 1);
         Map.Pair<Sequence<Integer>, Integer> clone = map.removeAny();
         map.add(clone.key(), beats);
@@ -301,9 +284,9 @@ public class MansliceGui extends Application{
     /*
      * kernel
      */
-    public static void cloneFlip(int loop, int pos) {
-        Sequence<Integer> clone = manFlips.entry(pos);
-        final Sequence<Integer> temp = manFlips.entry(pos);
+    public static void cloneFlip(int pos, int loop) {
+        Sequence<Integer> clone = manFlips.entry(pos - 1);
+        final Sequence<Integer> temp = manFlips.entry(pos - 1);
         for (int i = 0; i < loop; i++) {
             for (int k = 0; k < temp.length(); k++) {
                 clone.add(clone.length(), temp.entry(k));
@@ -371,7 +354,7 @@ public class MansliceGui extends Application{
                     ShortMessage.PROGRAM_CHANGE, chordVoice, 0);
             manTrack.add(new MidiEvent(changeProgram, 0));
 
-            int tick = 0;
+            int tick = 1;
             for (int m = 0; m < pattern.length(); m++) {
                 Sequence<Integer> flip = getFlipPattern(pattern.entry(m));
                 for (int i = 0; i < flip.length(); i++) {
@@ -402,8 +385,13 @@ public class MansliceGui extends Application{
      * kernel
      */
     public static void pause() {
-        if (manSequencer.isRunning()) {
-            manSequencer.stop();
+        try {
+            if (manSequencer.isRunning()) {
+                manSequencer.stop();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -415,7 +403,7 @@ public class MansliceGui extends Application{
     public static void forward() {
         long tickLength = manSequencer.getTickLength();
         long newPosition = manSequencer.getTickPosition() + 32;
-        if (newPosition > tickLength){
+        if (newPosition > tickLength) {
             long factor = newPosition / tickLength;
             newPosition = newPosition - (factor * tickLength);
         }
@@ -430,7 +418,7 @@ public class MansliceGui extends Application{
     public static void backward() {
         long tickLength = manSequencer.getTickLength();
         long newPosition = manSequencer.getTickPosition() - 32;
-        if (newPosition < 0){
+        if (newPosition < 0) {
             long factor = (Math.abs(newPosition) / tickLength);
             factor++;
             newPosition = newPosition + (factor * tickLength);
@@ -439,22 +427,23 @@ public class MansliceGui extends Application{
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Hello World!");
-        Button btn = new Button();
-        btn.setText("Say 'Hello World'");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
- 
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
-            }
-        });
-        
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
-        primaryStage.setScene(new Scene(root, 300, 250));
-        primaryStage.show();
+    public void start(Stage stage) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/manslice.fxml"));
+            Parent root = loader.load();
+            MansliceController controller = loader.getController();
+
+            Scene scene = new Scene(root, 300, 275);
+            scene.setOnKeyPressed(event -> {
+                controller.handleKeyPress(event);
+            });
+
+            stage.setTitle("FXML Welcome");
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
@@ -484,17 +473,15 @@ public class MansliceGui extends Application{
             addSlice(Slice(chordBeats[i], parse(chords[i])));
         }
 
-        String[][] flips = { { "1", "2" }, { "5", "6" }, { "7", "8"} };
+        String[][] flips = { { "1", "2" }, { "5", "6" }, { "7", "8" } };
         String[] patternInput = new String[] { "1", "1", "2", "3", "2", "3" };
         for (int i = 0; i < flips.length; i++) {
-            addFlip(Flip(0, parsePattern(flips[i])));
+            addFlip(Flip(0, parse(flips[i])));
         }
 
-        setPattern(parsePattern(patternInput));
+        setPattern(parse(patternInput));
 
         BPM = 500;
         setBPM(BPM);
-
-        play();
     }
 }

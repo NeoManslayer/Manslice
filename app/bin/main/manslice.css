@@ -1,0 +1,41 @@
+.root {
+    -fx-background-image: url("000000.png");
+    background-image: url("000000.png");
+}
+
+.button {
+    -fx-text-fill: white;
+    -fx-font-family: "monospace";
+    font-family: "monospace";
+    -fx-font-size: 30px;
+    font-size: 30px;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-background-color: #000000;
+    background-color: #000000;
+    -fx-background-radius:1;
+    -fx-border-color:#38b6ff;
+    border-color: #38b6ff;
+    -fx-border-width: 3 3 3 3;
+    border-width: 3 3 3 3;
+}
+
+.button:hover {
+    -fx-background-color: #38b6ff;
+    background-color: #38b6ff;
+}
+
+.button:focused {
+    -fx-background-color: #38b6ff;
+    background-color: #38b6ff;
+}
+
+.label {
+    -fx-text-fill: white;
+    -fx-font-family: "monospace";
+    font-family: "monospace";
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-background-color: #000000;
+    background-color: #000000;
+}

@@ -1,5 +1,3 @@
-package app.manslice;
-
 import javax.sound.midi.*;
 
 public class AruarianDance {
