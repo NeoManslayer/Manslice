@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Calendar Versioning](https://calver.org/) of
 the following form: YYYY.0M.0D.
 
+## 2025.01.30
+
+### Added
+
+- proof-of-concept revisited (functioning mansliceGuiApp)
+
+### Updated
+
+- TODO
+
+## 2025.01.27
+
+### Added
+
+- Gradle
+
+### Updated
+
+- TODO
+
 ## 2025.01.19
 
 ### Added
