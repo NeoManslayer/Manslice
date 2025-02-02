@@ -1,296 +1,432 @@
 package components.manslice;
 
-import java.util.Arrays;
+import javax.sound.midi.*;
+import components.sequence.Sequence;
 
 /*
- * Layered implementations of secondary methods for `Manslice`
+ * Abstract class for Manslice that implements 
+ * enhanced methods using kernel methods
  */
 public abstract class MansliceSecondary implements Manslice {
+    /*
+     * Create new Slices
+     */
+    protected abstract Slices createSlices();
 
     /*
-     * Kernel methods
-     *
-     * int lengthSlice()
-     * int lengthFlip()
-     * void insertSlice(int pos, Slice x)
-     * void insertFlip(int pos, Flip x)
-     * Slice removeSlice(int pos)
-     * Flip removeFlip(int pos)
+     * Create new Flips
      */
+    protected abstract Flips createFlips();
 
     /*
-     * Represents collection of song phrases
+     * A chord (notes) and its duration in song, beats
      */
-    public Slices<Slice> slices;
+    public abstract class Slices extends Manslice.Slices {
+        /*
+         * Switch positions of Slice at pos1 with Slice at pos2
+         */
+        void move(int pos1, int pos2) {
+            assert this.length() > pos1 - 1 && this.length() > pos2 - 1;
+            assert null != this.entry(pos1) && null != this.entry(pos2);
 
-    /*
-     * Represents collection of song patterns
-     */
-    public Flips<Flip> flips;
-
-    /*
-     * Constructor to initialize slices and flips
-     */
-    public MansliceSecondary(Slices<Slice> slices, Flips<Flip> flips) {
-        assert slices != null;
-        assert flips != null;
-        this.slices = slices;
-        this.flips = flips;
-    }
-
-    /*
-     * Default constructor
-     */
-    public MansliceSecondary() {
-    }
-
-    /*
-     * Returns slices followed by flips
-     */
-    public String toString() {
-        String slices = this.slices.toString();
-        String flips = this.flips.toString();
-        return "Slices: " + slices + "\n\nFlips: " + flips;
-    }
-
-    /*
-     * Replaces Slice at position with x
-     * 
-     * @param pos
-     * Position in Sequence<Slice>
-     * 
-     * @param x
-     * Slice that will replace a slice at pos
-     * 
-     * @ensures
-     * Slice at pos is removed from this
-     * then it is replaced with slice x at pos
-     * 
-     * @requires
-     * Pos is in Manslice.Slices<Slice>
-     */
-    public void replaceSlice(int pos, Slice x) {
-        assert slices != null;
-        assert x != null;
-        assert pos < lengthSlices();
-        assert validChord(x.chord);
-
-        insertSlice(pos, x);
-        removeSlice(pos + 1);
-    }
-
-    /*
-     * Replaces Flip at a position with x
-     * 
-     * @param pos
-     * Position in Sequence<Flip>
-     * 
-     * @param x
-     * Flip that will replace a flip at pos
-     * 
-     * @ensures
-     * Flip at pos is removed from this
-     * Then it is replaced with flip x at pos
-     * 
-     * @requires
-     * Pos is in Manslice.Flips<Flip>
-     */
-    public void replaceFlip(int pos, Flip x) {
-        assert flips != null;
-        assert x != null;
-        assert pos < lengthFlips();
-        assert validFlip(x.flip);
-
-        insertFlip(pos, x);
-        removeFlip(pos + 1);
-    }
-
-    /*
-     * Switches slice at position with slice at another position
-     * 
-     * @param pos1
-     * 1st position
-     * 
-     * @param pos2
-     * 2nd position
-     * 
-     * @ensures
-     * Slice at pos1 is switched with slice at pos2
-     *
-     * @requires
-     * There exists a slice at pos1 and pos2
-     * Pos1 and pos2 are less than length of slices
-     */
-    public void switchSlice(int pos1, int pos2) {
-        assert slices != null;
-        assert pos1 < lengthSlices();
-        assert pos2 < lengthSlices();
-
-        if (pos1 == pos2) {
-            return;
+            pushHistory(getState());
+            if (pos1 == pos2) {
+                return;
+            }
+            int greater = pos1 - 1;
+            int lesser = pos2 - 1;
+            if (pos1 < pos2) {
+                greater = pos2 - 1;
+                lesser = pos1 - 1;
+            }
+            Slice temp = this.entry(greater);
+            this.replaceEntry(greater, this.entry(lesser));
+            this.replaceEntry(lesser, temp);
         }
 
-        int one = pos1;
-        int two = pos2;
-        if (pos1 < pos2) {
-            one = pos2;
-            two = pos1;
+        /*
+         * Edit beats and notes of Slice at pos
+         */
+        void edit(int pos, int beats, int... notes) {
+            assert this.length() > pos - 1;
+            assert 1 <= beats && 16 >= beats;
+            assert null != notes;
+            assert MidiNote.contains(notes);
+
+            pushHistory(getState());
+            Slice slice = this.entry(pos);
+            slice.setBeats(beats);
+            slice.setNotes(notes);
+            this.replaceEntry(pos, slice);
         }
-        Slice temp = removeSlice(one);
-        insertSlice(one, removeSlice(two));
-        insertSlice(two, temp);
+
+        /*
+         * Edit beats and notes of Slice at pos
+         */
+        void edit(int pos, int beats, Sequence<Integer> notes) {
+            assert this.length() > pos - 1;
+            assert 1 <= beats && 16 >= beats;
+            assert null != notes;
+            assert MidiNote.contains(notes);
+
+            pushHistory(getState());
+            Slice slice = this.entry(pos);
+            slice.setBeats(beats);
+            slice.setNotes(notes);
+            this.replaceEntry(pos, slice);
+        }
+
+        /*
+         * Edit beats and notes of Slice at pos
+         */
+        void edit(int pos, Slice x) {
+            assert this.length() > pos - 1;
+            assert 1 <= x.getBeats() && 16 >= x.getBeats();
+            assert null != x.getNotes();
+            assert MidiNote.contains(x.getNotes());
+
+            pushHistory(getState());
+            Slice slice = this.entry(pos);
+            slice.setBeats(x.getBeats());
+            slice.setNotes(x.getNotes());
+            this.replaceEntry(pos, slice);
+        }
+
+        /*
+         * Edit beats of Slice at pos
+         */
+        void edit(int pos, int beats) {
+            assert this.length() > pos - 1;
+            assert 1 <= beats && 16 >= beats;
+
+            pushHistory(getState());
+            Slice slice = this.entry(pos);
+            slice.setBeats(beats);
+            this.replaceEntry(pos, slice);
+        }
+
+        /*
+         * Edit notes of Slice at pos
+         */
+        void edit(int pos, int... notes) {
+            assert this.length() > pos - 1;
+            assert null != notes;
+            assert MidiNote.contains(notes);
+
+            pushHistory(getState());
+            Slice slice = this.entry(pos);
+            slice.setNotes(notes);
+            this.replaceEntry(pos, slice);
+        }
+
+        /*
+         * Edit notes of Slice at pos
+         */
+        void edit(int pos, Sequence<Integer> notes) {
+            assert this.length() > pos - 1;
+            assert null != notes;
+            assert MidiNote.contains(notes);
+
+            pushHistory(getState());
+            Slice slice = this.entry(pos);
+            slice.setNotes(notes);
+            this.replaceEntry(pos, slice);
+        }
+
+        /*
+         * Copy Slice at pos to clipboard
+         */
+        void yank(int pos) {
+            assert this.length() > pos - 1;
+
+            setBuffer(this.entry(pos));
+        }
+
+        /*
+         * Paste Slice in clipboard to pos
+         */
+        void put(int pos) {
+            assert this.length() > pos - 1;
+
+            pushHistory(getState());
+            this.add(pos, getBuffer());
+        }
+
+        /*
+         * Clones entry at pos
+         */
+        void clone(int pos) {
+            assert this.length() > pos - 1;
+
+            pushHistory(getState());
+            Slice clone = this.entry(pos).clone();
+            this.add(pos, clone);
+        }
+
+        /*
+         * Clones entry at pos with value beats
+         */
+        void clone(int pos, int beats) {
+            assert this.length() > pos - 1;
+            assert 1 <= beats && 16 >= beats;
+
+            pushHistory(getState());
+            Slice clone = this.entry(pos).clone(beats);
+            this.add(pos, clone);
+        }
+
+        /*
+         * Adds Slice containing transformed values of Slice
+         * at pos using beats and int... notes
+         */
+        void transform(int pos, int beats, int... notes) {
+            assert this.length() > pos - 1;
+            assert 1 <= beats && 16 >= beats;
+            assert null != notes;
+            assert MidiNote.contains(notes);
+
+            pushHistory(getState());
+            Slice transformed = this.entry(pos).transform(beats, notes);
+            this.add(pos, transformed);
+        }
+
+        /*
+         * Adds Slice containing transformed values of Slice
+         * at pos using beats and Sequence<Integer> notes
+         */
+        void transform(int pos, int beats, Sequence<Integer> notes) {
+            assert this.length() > pos - 1;
+            assert 1 <= beats && 16 >= beats;
+            assert null != notes;
+            assert MidiNote.contains(notes);
+
+            pushHistory(getState());
+            Slice transformed = this.entry(pos).transform(beats, notes);
+            this.add(pos, transformed);
+        }
+
+        /*
+         * Adds Slice containing transformed values of Slice
+         * at pos using int... notes
+         */
+        void transform(int pos, int... notes) {
+            assert this.length() > pos - 1;
+            assert null != notes;
+            assert MidiNote.contains(notes);
+
+            pushHistory(getState());
+            Slice transformed = this.entry(pos).transform(notes);
+            this.add(pos, transformed);
+        }
+
+        /*
+         * Adds Slice containing transformed values of Slice
+         * at pos using int... notes
+         */
+        void transform(int pos, Sequence<Integer> notes) {
+            assert this.length() > pos - 1;
+            assert null != notes;
+            assert MidiNote.contains(notes);
+
+            pushHistory(getState());
+            Slice transformed = this.entry(pos).transform(notes);
+            this.add(pos, transformed);
+        }
     }
 
     /*
-     * Switches flip at position with flip at another position
-     * 
-     * @param pos1
-     * 1st position
-     * 
-     * @param pos2
-     * 2nd position
-     * 
-     * @ensures
-     * Flip at pos1 is switched with flip at pos2
-     *
-     * @requires
-     * There exists a flip at pos1 and pos2
-     * pos1 and pos2 are less than length of flips
+     * A pattern in song (the order the chords are played)
      */
-    public void switchFlip(int pos1, int pos2) {
-        assert flips != null;
-        assert pos1 < lengthFlips();
-        assert pos2 < lengthFlips();
+    public abstract class Flips extends Manslice.Flips {
+        /*
+         * Switch Flip at pos1 with Flip at pos2
+         */
+        void move(int pos1, int pos2) {
+            assert this.length() > pos1 && this.length() > pos2;
+            assert null != this.entry(pos1) && null != this.entry(pos2);
 
-        if (pos1 == pos2) {
-            return;
+            pushHistory(getState());
+            if (pos1 == pos2) {
+                return;
+            }
+            int greater = pos1 - 1;
+            int lesser = pos2 - 1;
+            if (pos1 < pos2) {
+                greater = pos2 - 1;
+                lesser = pos1 - 1;
+            }
+            Flip temp = this.entry(greater);
+            this.replaceEntry(greater, this.entry(lesser));
+            this.replaceEntry(lesser, temp);
         }
 
-        int one = pos1;
-        int two = pos2;
-        if (pos1 < pos2) {
-            one = pos2;
-            two = pos1;
+        /*
+         * Edit Flip at pos with int... pattern
+         */
+        void edit(int pos, int... pattern) {
+            assert this.length() > pos - 1;
+            assert validPattern(pattern);
+
+            pushHistory(getState());
+            this.entry(pos).setPattern(pattern);
         }
-        Flip temp = removeFlip(one);
-        insertFlip(one, removeFlip(two));
-        insertFlip(two, temp);
+
+        /*
+         * Clones entry at pos
+         */
+        void clone(int pos) {
+            assert this.length() > pos - 1;
+
+            pushHistory(getState());
+            Flip clone = this.entry(pos).clone();
+            this.add(pos, clone);
+        }
+
+        /*
+         * Copy Flip at pos to clipboard
+         */
+        void yank(int pos) {
+            assert this.length() > pos - 1;
+
+            setBuffer(this.entry(pos));
+        }
+
+        /*
+         * Paste Flip in clipboard to pos
+         */
+        void put(int pos) {
+            assert this.length() > pos - 1;
+
+            pushHistory(getState());
+            this.add(pos, getBuffer());
+        }
+
+        /*
+         * Merges patterns of Flip(s) at positions into one Flip entry
+         */
+        void meta(int... positions) {
+            assert validPositions(positions);
+
+            pushHistory(getState());
+            Flip meta = this.entry(positions[0] - 1);
+            for (int i = 1; i < positions.length; i++) {
+                meta.addPattern(this.remove(positions[i] - 1).getPattern());
+            }
+            this.replaceEntry(positions[0] - 1, meta);
+        }
+
+        /*
+         * Merges patterns of Flip(s) at positions into one Flip entry
+         */
+        void meta(Sequence<Integer> positions) {
+            assert validPositions(positions);
+
+            pushHistory(getState());
+            Flip meta = this.entry(positions.entry(0));
+            for (int i = 1; i < positions.length(); i++) {
+                meta.addPattern(this.remove(positions.entry(i) - 1).getPattern());
+            }
+            this.replaceEntry(positions.entry(0) - 1, meta);
+        }
+
+        /*
+         * Order the way Flips are played
+         */
+        void order(int... positions) {
+            assert validPositions(positions);
+
+            pushHistory(getState());
+            Flips temp = createFlips();
+            temp.transferFrom(this);
+            for (int i = 0; i < temp.length(); i++) {
+                if (i > positions.length - 1) {
+                    this.add(this.length(), temp.remove(0));
+                }
+                else {
+                    this.add(this.length(), temp.remove(positions[i] - 1)); 
+                }
+            }
+        }
+
+        /*
+         * Order the way Flips are played
+         */
+        void order(Sequence<Integer> positions) {
+            assert validPositions(positions);
+
+            pushHistory(getState());
+            Flips temp = createFlips();
+            temp.transferFrom(this);
+            for (int i = 0; i < temp.length(); i++) {
+                if (i > positions.length() - 1) {
+                    this.add(this.length(), temp.remove(0));
+                }
+                else {
+                    this.add(this.length(), temp.remove(positions.entry(i) - 1)); 
+                }
+            } 
+        }
     }
 
     /*
-     * Appends a slice (chord that plays for a number of beats) to `this`
-     *
-     * @param beats
-     * Number of beats (time duration of phrase)
-     *
-     * @param chord
-     * Chord (collection of music notes)
-     *
-     * @ensures
-     * Slice containing beats and chord is appended to `this`
-     *
-     * @requires
-     * 1 <= beats <= 16
-     * and chord belongs to set of chord names (maj7...)
-     * or chord belongs to set of notes: A5, B7...
-     * (or midi values: 30, 31...)
+     * Revert to latest state in undo history
      */
-    public void slice(int beats, String... chord) {
-        assert slices != null;
-        assert beats >= 1 && beats <= 16;
-        assert validChord(chord);
+    public void undo() {
+        assert null != this;
 
-        Slice x = new Slice();
-        x.beats = beats;
-        x.chord = chord;
-        insertSlice(lengthSlices(), x);
+        pushRedoHistory(getState());
+        setState(popHistory());
     }
 
     /*
-     * Appends a flip (phrase pattern) to `this`
-     *
-     * @param bpm
-     * Beats per minute of flip
-     * 
-     * @param loop
-     * How many times to repeat flip in song
-     * 
-     * @param flip
-     * Phrase pattern: 1234343456 (corresponds to positions of slices)
-     * 
-     * @ensures
-     * `this` is appended with a flip containing
-     * bpm, loop, and pattern (flip)
-     *
-     * @requires
-     * 80 <= bpm <= 120
-     * 1 <= loop
-     * Flip is numbers: "1234" + ... + "9842" + ...
+     * Revert to latest state in redo history
      */
-    public void flip(int bpm, int loop, String... flip) {
-        assert flips != null;
-        assert bpm >= 80 && bpm <= 120;
-        assert validFlip(flip);
+    public void redo() {
+        assert null != this;
 
-        Flip x = new Flip();
-        x.bpm = bpm;
-        x.loop = loop;
-        x.flip = flip;
-        insertFlip(lengthFlips(), x);
+        pushHistory(getState());
+        setState(popRedoHistory());
     }
 
     /*
-     * Compiles flips sequence into one phrase pattern
-     *
-     * @param bpm
-     * Beats per minute of compiled flips
-     *
-     * @param loop
-     * Number of times compiled flips should be repeated in song
-     *
-     * @ensures
-     * The flips sequence in `this`
-     * (flip_1, flip_2, ..., flip_len-2, flip_len-1)
-     * is compiled together into one flip (one pattern)
-     * The updated flips sequence will have a new length of 1
-     *
-     * @requires
-     * 80 <= bpm <= 120
-     * 1 <= loop
+     * Play Midi song
      */
-    public void meta(int bpm, int loop) {
-        assert flips != null;
-        assert bpm >= 80 && bpm <= 120;
-        assert loop >= 1;
+    public void play() {
+        assert null != getSequencer();
 
-        if (lengthFlips() == 0) {
-            return;
+        Sequencer sequencer = getSequencer();
+        if (sequencer.isRunning()) {
+            sequencer.close();
         }
+        try {
+            sequencer = MidiSystem.getSequencer();
+            sequencer.open();
 
-        String compiled = "";
-        while (lengthFlips() > 0) {
-            compiled += Arrays.deepToString(removeFlip(0).flip);
+            javax.sound.midi.Sequence sequence = getSequence();
+
+            sequencer.setSequence(sequence);
+            sequencer.setTempoInBPM(getBPM());
+            sequencer.setLoopCount(-1);
+
+            sequencer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        Flip meta = new Flip();
-        meta.bpm = bpm;
-        meta.loop = loop;
-        meta.flip = new String[] { compiled };
-        insertFlip(0, meta);
     }
 
-    // Enhanced method not implemented, left abstract
     /*
-     * Generates gui interface that allows
-     * playing/editing of chord progression
-     *
-     * @requires
-     * Nick isn't lazy
-     *
-     * @ensures
-     * Gui will open containing options to run above methods
-     * through manual user input, including an option
-     * to hear the chord progression (play the song).
-     * Allows user to see flips/patterns/slices and edit them.
+     * Stop Midi song
      */
-    public abstract void song();
+    public void stop() {
+        assert null != getSequencer();
+
+        Sequencer sequencer = getSequencer();
+        try {
+            if (getSequencer().isRunning()) {
+                sequencer.stop();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
