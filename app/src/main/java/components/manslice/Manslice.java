@@ -1,159 +1,102 @@
 package components.manslice;
 
 /*
- * Allows extended editing of chord progression and
- * potential gui interface with song playability
+ * Enhanced interface for Manslice
  */
 public interface Manslice extends MansliceKernel {
+    /*
+     * A chord (notes) and its duration in song, beats
+     */
+    abstract class Slices extends MansliceKernel.Slices {
+        /*
+         * Switch positions of Slice at pos1 with Slice at pos2
+         */
+        abstract void move(int pos1, int pos2);
+
+        /*
+         * Edit beats and notes of Slice at pos
+         */
+        abstract void edit(int pos, int beats, int... notes);
+
+        /*
+         * Copy Slice at pos to clipboard
+         */
+        abstract void yank(int pos);
+
+        /*
+         * Paste Slice in clipboard to pos
+         */
+        abstract void put(int pos);
+
+        /*
+         * Cloness entry at pos
+         */
+        abstract void clone(int pos);
+
+        /*
+         * Adds Slice containing transformed values of Slice 
+         * at pos using beats and int... notes
+         */
+        abstract void transform(int pos, int beats, int... notes);
+    }
 
     /*
-     * Replaces Slice at position with x
-     * 
-     * @param pos
-     * Position in Sequence<Slice>
-     * 
-     * @param x
-     * Slice that will replace a slice at pos
-     * 
-     * @ensures
-     * Slice at pos is removed from this
-     * then it is replaced with slice x at pos
-     * 
-     * @requires
-     * Pos is in Manslice.Slices<Slice>
+     * A pattern in song (the order the chords are played)
      */
-    void replaceSlice(int pos, Slice x);
+    abstract class Flips extends MansliceKernel.Flips {
+        /*
+         * Switch Flip at pos1 with Flip at pos2
+         */
+        abstract void move(int pos1, int pos2);
+
+        /*
+         * Edit Flip at pos with int... pattern
+         */
+        abstract void edit(int pos, int... pattern);
+
+        /*
+         * Copy Flip at pos to clipboard
+         */
+        abstract void yank(int pos);
+
+        /*
+         * Paste Flip in clipboard to pos
+         */
+        abstract void put(int pos);
+
+        /*
+         * Clones entry at pos
+         */
+        abstract void clone(int pos);
+
+        /*
+         * Merges patterns of Flip(s) at positions into one Flip entry
+         */
+        abstract void meta(int... positions);
+
+        /*
+         * Order in which to play the Flips (orders the Flips)
+         */
+        abstract void order(int... positions);
+    }
 
     /*
-     * Replaces Flip at a position with x
-     * 
-     * @param pos
-     * Position in Sequence<Flip>
-     * 
-     * @param x
-     * Flip that will replace a flip at pos
-     * 
-     * @ensures
-     * Flip at pos is removed from this
-     * Then it is replaced with flip x at pos
-     * 
-     * @requires
-     * Pos is in Manslice.Flips<Flip>
+     * Revert to latest state in undo history
      */
-    void replaceFlip(int pos, Flip x);
+    void undo();
 
     /*
-     * Switches slice at position with slice at another position
-     * 
-     * @param pos1
-     * 1st position
-     * 
-     * @param pos2
-     * 2nd position
-     * 
-     * @ensures
-     * Slice at pos1 is switched with slice at pos2
-     *
-     * @requires
-     * There exists a slice at pos1 and pos2
-     * Pos1 and pos2 are less than length of slices
+     * Revert to latest state in redo history
      */
-    void switchSlice(int pos1, int pos2);
+    void redo();
 
     /*
-     * Switches flip at position with flip at another position
-     * 
-     * @param pos1
-     * 1st position
-     * 
-     * @param pos2
-     * 2nd position
-     * 
-     * @ensures
-     * Flip at pos1 is switched with flip at pos2
-     *
-     * @requires
-     * There exists a flip at pos1 and pos2
-     * pos1 and pos2 are less than length of flips
+     * Play Midi song
      */
-    void switchFlip(int pos1, int pos2);
+    void play();
 
     /*
-     * Appends a slice (chord that plays for a number of beats) to `this`
-     *
-     * @param beats
-     * Number of beats (time duration of phrase)
-     *
-     * @param chord
-     * Chord (collection of music notes)
-     *
-     * @ensures
-     * Slice containing beats and chord is appended to `this`
-     *
-     * @requires
-     * 1 <= beats <= 16
-     * and chord belongs to set of chord names (maj7...)
-     * or chord belongs to set of notes: A5, B7...
-     * (or midi values: 30, 31...)
+     * Stop Midi song
      */
-    void slice(int beats, String... chord);
-
-    /*
-     * Appends a flip (phrase pattern) to `this`
-     *
-     * @param bpm
-     * Beats per minute of flip
-     * 
-     * @param loop
-     * How many times to repeat flip in song
-     * 
-     * @param flip
-     * Phrase pattern: 1234343456 (corresponds to positions of slices)
-     * 
-     * @ensures
-     * `this` is appended with a flip containing
-     * bpm, loop, and pattern (flip)
-     *
-     * @requires
-     * 80 <= bpm <= 120
-     * 1 <= loop
-     * Flip is numbers: "1234" + ... + "9842" + ...
-     */
-    void flip(int bpm, int loop, String... flip);
-
-    /*
-     * Compiles flips sequence into one phrase pattern
-     *
-     * @param bpm
-     * Beats per minute of compiled flips
-     *
-     * @param loop
-     * Number of times compiled flips should be repeated in song
-     *
-     * @ensures
-     * The flips sequence in `this`
-     * (flip_1, flip_2, ..., flip_len-2, flip_len-1)
-     * is compiled together into one flip (one pattern)
-     * The updated flips sequence will have a new length of 1
-     *
-     * @requires
-     * 80 <= bpm <= 120
-     * 1 <= loop
-     */
-    void meta(int bpm, int loop);
-
-    /*
-     * Generates gui interface that allows
-     * playing/editing of chord progression
-     *
-     * @requires
-     * Nick isn't lazy
-     *
-     * @ensures
-     * Gui will open containing options to run above methods
-     * through manual user input, including an option
-     * to hear the chord progression (play the song).
-     * Allows user to see flips/patterns/slices and edit them.
-     */
-    void song();
+    void stop();
 }
