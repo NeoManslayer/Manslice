@@ -53,7 +53,7 @@
         spacing="10"
         alignment="CENTER"
         visible="true">
-        <HBox 
+        <VBox 
             fx:id="manSlicesContainer" 
             spacing="10" 
             alignment="CENTER" 
@@ -80,7 +80,7 @@
         spacing="10"
         alignment="CENTER"
         visible="true">
-        <HBox 
+        <VBox 
             fx:id="manFlipsContainer" 
             spacing="10" 
             alignment="CENTER" 
@@ -107,7 +107,7 @@
         spacing="10"
         alignment="CENTER"
         visible="true">
-        <HBox 
+        <VBox 
             fx:id="manPatternContainer" 
             spacing="10" 
             alignment="CENTER" 
@@ -152,7 +152,7 @@
         alignment="BOTTOM_CENTER"
         visible="false">
         <Label
-            text="Enter input: " />
+            text="Enter positive integers separated by whitespace or commas: " />
         <TextField
             fx:id="inputField"
             promptText="Type something..."
