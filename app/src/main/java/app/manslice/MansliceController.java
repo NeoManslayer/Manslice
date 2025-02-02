@@ -7,9 +7,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.*;
 import javafx.event.*;
-import java.util.Arrays;
-import components.map.Map;
-import components.sequence.Sequence;
 
 public class MansliceController extends MansliceGui {
 
@@ -74,17 +71,17 @@ public class MansliceController extends MansliceGui {
     private Button[] buttons;
 
     @FXML
-    private VBox inputContainer;
+    private VBox inputContainer,
+            manSlicesContainer,
+            manFlipsContainer,
+            manPatternContainer;
 
     @FXML
     private HBox mainContainer,
             sliceContainer,
             flipContainer,
             patternContainer,
-            midiContainer,
-            manSlicesContainer,
-            manFlipsContainer,
-            manPatternContainer;
+            midiContainer;
 
     @FXML
     private TextField inputField;
