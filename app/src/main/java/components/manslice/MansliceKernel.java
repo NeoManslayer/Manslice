@@ -463,7 +463,7 @@ public interface MansliceKernel extends Standard<Manslice> {
     /*
      * Sequence of chords (Slice(s))
      */
-    abstract class Slices {
+    abstract class Slices { 
         /*
          * Gets Slice in clipboard
          */
@@ -576,9 +576,9 @@ public interface MansliceKernel extends Standard<Manslice> {
         abstract void clear();
 
         /*
-         * Transfers to this, clears target x
+         * Transfer from
          */
-        abstract void transferFrom(Flips x);
+        abstract void transferFrom(Flips source);
     }
 
     /*
