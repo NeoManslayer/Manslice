@@ -1,6 +1,6 @@
 # Manslice Preview
 
-[![Watch the video](https://i.sstatic.net/Vp2cE.png)](https://youtu.be/-5MFaZHH-rA)
+[![Watch the video](https://img.youtube.com/vi/-5MFaZHH-rA/0.jpg)](https://youtu.be/-5MFaZHH-rA)
 
 # Portfolio Project
 
