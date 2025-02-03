@@ -1,3 +1,7 @@
+# Manslice Preview
+
+[![Watch the video](https://i.sstatic.net/Vp2cE.png)](https://youtu.be/-5MFaZHH-rA)
+
 # Portfolio Project
 
 The purpose of this repo is to provide a framework for creating your own
