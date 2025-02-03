@@ -1,4 +1,4 @@
-# Manslice Preview
+# Video Demo
 
 [![Watch the video](https://img.youtube.com/vi/-5MFaZHH-rA/0.jpg)](https://youtu.be/-5MFaZHH-rA)
 
